@@ -1,7 +1,6 @@
 'use strict'
 
 const User = use('App/Models/User')
-const { validateAll } = use('Validator')
 
 class UserController {
     async create({ request, response, auth }) {
@@ -33,12 +32,22 @@ class UserController {
     async login ({ request, response, auth }) {
         try {
             const { email, password } = request.all()
-            const validaToken = await auth.attempt(email, password)
 
-            return validaToken
-        } catch (err) {
-            return err
+            const token = await auth.use('api').attempt(email, password)
+            console.log(token);
+            return token
+        } catch {
+            return response.badRequest('Invalid credentials')
         }
+        // try {
+        //     const { email, password } = request.all()
+        //     const validaToken = await auth.attempt(email, password)
+
+        //     console.log(validaToken);
+        //     return validaToken
+        // } catch (err) {
+        //     return err
+        // }
     }
     
     async loginCheck ({ request, response, auth }) {

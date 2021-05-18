@@ -60,7 +60,10 @@ class ServicoCategoriaController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const data = await App.all();
+    const data = await App.query()
+      .select('*')
+      .orderBy('descricao')
+      .fetch();
 
     return data
   }

@@ -23,14 +23,15 @@ Route.get('/servicoCategoriaShow', 'ServicoCategoriaController.show')
 Route.post('/servicoCategoriaUpdate', 'ServicoCategoriaController.update').middleware('auth')
 Route.delete('/servicoCategoriaDestroy', 'ServicoCategoriaController.destroy').middleware('auth')
 
-Route.post('/servicoStore', 'ServicoController.store').middleware('auth')
+Route.post('/servicoStore', 'ServicoController.store')//.middleware('auth')
 Route.get('/servicoShow', 'ServicoController.show')
 Route.get('/servicoLike', 'ServicoController.like')
 Route.post('/servicoUpdate', 'ServicoController.update').middleware('auth')
 Route.delete('/servicoDestroy', 'ServicoController.destroy').middleware('auth')
 
 Route.post('/vagaEmpregoStore', 'VagaEmpregoController.store').middleware('auth')
-Route.get('/vagaEmpregoShow', 'VagaEmpregoController.show').middleware('auth')
+Route.get('/vagaEmpregoShow', 'VagaEmpregoController.show')
+Route.get('/vagaEmpregoLike', 'VagaEmpregoController.like')
 Route.delete('/vagaEmpregoDestroy', 'VagaEmpregoController.destroy').middleware('auth')
 
 Route.post('/chatStore', 'ChatController.store').middleware('auth')

@@ -1,5 +1,7 @@
 'use strict'
 
+const App = use('App/Models/VagaEmprego')
+
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
@@ -41,11 +43,10 @@ class VagaEmpregoController {
    * @param {Response} ctx.response
    */
   async store ({ request, response, auth }) {
-    const data = request.only([,"vaga", "empresa", "vinculo", "valor", "detalhes", "procurar"])
+    const data = request.only([,"vaga", "empresa", "vinculo", "valor", "requisitos", "contato_email", "contato_telefone"])
     data.user_id = auth.user.id
 
     const add = await App.create({...data})
-
     return add
   }
 
@@ -110,6 +111,22 @@ class VagaEmpregoController {
         return response.status(200).send({ message: 'registro removido!' })    
     }catch(err){
         console.log(err);            
+    }
+  }
+
+  async like ({ params, request, response, view }) {
+    try {
+      const { texto } = request.get();
+
+      const data = await App.query()
+        .select('*')
+        .whereRaw('upper(vaga) like ? or upper(empresa) like ? or upper(vinculo) like ? or upper(requisitos) like ?', ['%'+texto.toUpperCase()+'%', '%'+texto.toUpperCase()+'%', '%'+texto.toUpperCase()+'%', '%'+texto.toUpperCase()+'%'])
+        .fetch();
+
+      return data
+    } catch (error) {
+        console.log(error.message);
+        return response.status(500).send({error: 'Error: '+error.message})
     }
   }
 }

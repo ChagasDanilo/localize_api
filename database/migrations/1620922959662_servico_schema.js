@@ -13,7 +13,7 @@ class ServicoSchema extends Schema {
       table.integer('user_id').unsigned().references('id').inTable('users')
       table.decimal('valor', 18, 2)
       table.string('unidade_medida')
-      table.decimal('estrelas', 18, 2).notNullable()
+      table.decimal('estrelas', 18, 2)
       table.string('palavra_chave')
       table.timestamps()
     })

@@ -1,5 +1,9 @@
 'use strict'
 
+const App = use('App/Models/Servico')
+const AppImg = use('App/Models/ServicoImagem')
+const Helpers = use('Helpers')
+
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
@@ -41,12 +45,35 @@ class ServicoController {
    * @param {Response} ctx.response
    */
   async store ({ request, response, auth }) {
-    const data = request.only([,"servico_categoria_id", "descricao", "detalhes", "valor", "unidade_medida", "estrelas", "palavra_chave"])
-    data.user_id = auth.user.id
+    try{
+      const data = request.only([,"servico_categoria_id", "descricao", "detalhes", "valor",
+                                  "unidade_medida", "palavra_chave", "imagens_path"])
+      // data.user_id = auth.user.id
+      data.user_id = 1
+      data.estrelas = 0
 
-    const add = await App.create({...data})
+      const file = request.file('imagens', {})
+      // const add = await App.create({...data})
 
-    return add
+      var imgPath = []
+      await file.moveAll(Helpers.publicPath('arquivos/servicos'), (param) => {
+        imgPath.push(param.clientName)
+      })
+      if (!file.movedAll()) {
+        console.log(file.errors())
+      }
+      console.log(imgPath);
+
+      // const img = []
+      // console.log(add.id);
+      // img.servico_id = add.id
+      // img.path = param.clientName
+      // await AppImg.create({...img});
+
+      return 'ok'
+    }catch(err){
+      return err
+    }
   }
 
   /**
