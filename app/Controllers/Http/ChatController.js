@@ -20,6 +20,20 @@ class ChatController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
+    try{
+    const { cod } = request.get();
+
+    const data = await App.query()
+      // .select('*')
+      .where('user_id_destinatario', cod)
+      .where('user_id_remetente', 1)
+      .orderBy('created_at')
+      .fetch();
+
+    return data
+    }catch(err){
+      console.log(err);
+    }
   }
 
   /**
@@ -43,8 +57,8 @@ class ChatController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
-    const data = request.only([,"user_id_remetente", "user_id_destinatario", "mensagem",])
-    data.user_id = auth.user.id
+    const data = request.only([, "user_id_destinatario", "mensagem",])
+    data.user_id_remetente = 1 //auth.user.id
 
     const add = await App.create({...data})
 
@@ -61,11 +75,12 @@ class ChatController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const data = await App.query()
-      .select('*')
-      .whereRaw('user_id_remetente = ? or user_id_destinatario ?', [cod, cod])
-      .orderBy('created_at')
-      .fetch();
+    const data = await App.all();
+    // const data = await App.query()
+    //   .select('*')
+    //   .whereRaw('user_id_remetente = ? or user_id_destinatario ?', [cod, cod])
+    //   .orderBy('created_at')
+    //   .fetch();
 
     return data
   }

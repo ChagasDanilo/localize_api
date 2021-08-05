@@ -1,5 +1,7 @@
 'use strict'
 
+const App = use('App/Models/ServicoImagem')
+
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
@@ -18,6 +20,14 @@ class ServicoImagemController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
+    const { cod } = request.get();
+
+    const data = await App.query()
+    .where('servico_id', cod)
+    .orderBy('id')
+    .fetch();
+
+    return data
   }
 
   /**
@@ -53,6 +63,9 @@ class ServicoImagemController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
+    const data = await App.all();
+
+    return data
   }
 
   /**

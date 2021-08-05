@@ -15,6 +15,10 @@ class UserSchema extends Schema {
       table.string('instagram')
       table.string('facebook')
       table.string('path')
+      table.string('cep')
+      table.string('pais').default('Brasil')
+      table.string('estado')
+      table.string('cidade')
       table.timestamps()
     })
   }
