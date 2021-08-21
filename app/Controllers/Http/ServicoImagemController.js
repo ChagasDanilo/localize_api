@@ -1,6 +1,7 @@
 'use strict'
 
 const App = use('App/Models/ServicoImagem')
+const Helpers = use('Helpers')
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -19,15 +20,50 @@ class ServicoImagemController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index({ request, response, view }) {
     const { cod } = request.get();
 
     const data = await App.query()
-    .where('servico_id', cod)
-    .orderBy('id')
-    .fetch();
+      .where('servico_id', cod)
+      .orderBy('id')
+      .fetch();
 
+    console.log(data.rows);
     return data
+  }
+
+  async indexFirst({ request, response, view }) {
+    try {
+      const { cod } = request.get();
+
+      const data = await App.query()
+        .select('path')
+        .where('servico_id', cod)
+        .orderBy('id')
+        .limit(1)
+        .fetch();
+
+      console.log(data.rows[0].path);
+
+      return response.download(Helpers.publicPath(`arquivos/servicos/` + data.rows[0].path));
+
+    } catch (error) {
+      console.log(error);
+      return response.status(500).send({ error: error })
+    }
+  }
+
+  async indexImage({ request, response, view }) {
+    try {
+      const { fileName } = request.get();
+
+      // send image raw
+      return response.download(Helpers.publicPath(`arquivos/servicos/` + fileName));
+
+    } catch (error) {
+      console.log(error);
+      return response.status(500).send({ error: error })
+    }
   }
 
   /**
@@ -39,7 +75,7 @@ class ServicoImagemController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async create({ request, response, view }) {
   }
 
   /**
@@ -50,7 +86,7 @@ class ServicoImagemController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store({ request, response }) {
   }
 
   /**
@@ -62,7 +98,7 @@ class ServicoImagemController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
+  async show({ params, request, response, view }) {
     const data = await App.all();
 
     return data
@@ -77,7 +113,7 @@ class ServicoImagemController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
+  async edit({ params, request, response, view }) {
   }
 
   /**
@@ -88,7 +124,7 @@ class ServicoImagemController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
   }
 
   /**
@@ -99,7 +135,7 @@ class ServicoImagemController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
   }
 }
 

@@ -19,14 +19,15 @@ class ChatController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index ({ request, response, view, auth }) {
     try{
     const { cod } = request.get();
 
     const data = await App.query()
       // .select('*')
-      .where('user_id_destinatario', cod)
-      .where('user_id_remetente', 1)
+      .whereRaw('(user_id_destinatario = ' + auth.user.id + ' or user_id_remetente = ' + auth.user.id
+          + ') and (user_id_destinatario = ' + cod + ' or user_id_remetente = ' + cod)
+      // .where('user_id_remetente', auth.user.id)
       .orderBy('created_at')
       .fetch();
 
@@ -56,9 +57,9 @@ class ChatController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request, response, auth }) {
     const data = request.only([, "user_id_destinatario", "mensagem",])
-    data.user_id_remetente = 1 //auth.user.id
+    data.user_id_remetente = auth.user.id
 
     const add = await App.create({...data})
 

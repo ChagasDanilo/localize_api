@@ -26,11 +26,14 @@ Route.delete('/servicoCategoriaDestroy', 'ServicoCategoriaController.destroy').m
 Route.post('/servicoStore', 'ServicoController.store').middleware('auth')
 Route.get('/servicoShow', 'ServicoController.show')
 Route.get('/servicoLike', 'ServicoController.like')
+Route.get('/servicoIndex', 'ServicoController.index')
 Route.post('/servicoUpdate', 'ServicoController.update').middleware('auth')
 Route.delete('/servicoDestroy', 'ServicoController.destroy').middleware('auth')
 
 Route.get('/servicoImagemShow', 'ServicoImagemController.show')
 Route.get('/servicoImagemIndex', 'ServicoImagemController.index')
+Route.get('/servicoImagemIndexFirst', 'ServicoImagemController.indexFirst')
+Route.get('/servicoImagemIndexImagem', 'ServicoImagemController.indexImage')
 
 Route.post('/vagaEmpregoStore', 'VagaEmpregoController.store').middleware('auth')
 Route.get('/vagaEmpregoShow', 'VagaEmpregoController.show')
