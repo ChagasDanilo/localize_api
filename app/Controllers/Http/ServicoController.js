@@ -62,13 +62,13 @@ class ServicoController {
     try {
       const data = request.only([, "servico_categoria_id", "descricao", "detalhes", "valor",
         "unidade_medida", "palavra_chave",])
-      // data.user_id = auth.user.id
-      data.user_id = 1
+      data.user_id = auth.user.id
       data.estrelas = 0
 
       const file = request.file('imagens', {})
 
       const add = await App.create({ ...data })
+      console.log(add);
 
       var imgPath = []
       await file.moveAll(Helpers.publicPath('arquivos/servicos'), (param) => {

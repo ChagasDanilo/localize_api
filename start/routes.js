@@ -41,8 +41,10 @@ Route.get('/vagaEmpregoLike', 'VagaEmpregoController.like')
 Route.delete('/vagaEmpregoDestroy', 'VagaEmpregoController.destroy').middleware('auth')
 
 Route.post('/chatStore', 'ChatController.store').middleware('auth')
-Route.get('/chatShow', 'ChatController.show').middleware('auth')
 Route.get('/chatIndex', 'ChatController.index').middleware('auth')
+Route.get('/chatShow', 'ChatController.show').middleware('auth')
+
+Route.get('/chatMensagemShow', 'ChatMensagemController.show').middleware('auth') 
 
 Route.post('/login', 'LoginController.login')
 Route.post('/logout', 'LoginController.logout').middleware('auth')

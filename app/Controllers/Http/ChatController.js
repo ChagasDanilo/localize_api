@@ -1,6 +1,7 @@
 'use strict'
 
 const App = use('App/Models/Chat')
+const AppMensagem = use('App/Models/ChatMensagem')
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -19,20 +20,26 @@ class ChatController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view, auth }) {
-    try{
-    const { cod } = request.get();
+  async index({ request, response, view, auth }) {
+    try {
+      const { cod } = request.get();
 
-    const data = await App.query()
-      // .select('*')
-      .whereRaw('(user_id_destinatario = ' + auth.user.id + ' or user_id_remetente = ' + auth.user.id
-          + ') and (user_id_destinatario = ' + cod + ' or user_id_remetente = ' + cod)
-      // .where('user_id_remetente', auth.user.id)
-      .orderBy('created_at')
-      .fetch();
+      console.log(auth.user.id);
+      console.log(cod);
+      const data = await App.query()
+        .select('*')
+        .whereRaw('(user_id_1 = ' + auth.user.id
+          + ' and user_id_2 = ' + cod
+          + ') or (user_id_1 = ' + cod
+          + ' and user_id_2 = ' + auth.user.id
+          + ')')
+        .limit(1)
+        .fetch();
 
-    return data
-    }catch(err){
+        console.log(data.rows);
+
+      return data
+    } catch (err) {
       console.log(err);
     }
   }
@@ -46,7 +53,7 @@ class ChatController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async create({ request, response, view }) {
   }
 
   /**
@@ -57,13 +64,35 @@ class ChatController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response, auth }) {
-    const data = request.only([, "user_id_destinatario", "mensagem",])
-    data.user_id_remetente = auth.user.id
+  async store({ request, response, auth }) {
+    try {
+      const dataRequisicao = request.only([, "chat_id", "user_id_destinatario", "mensagem"])
 
-    const add = await App.create({...data})
+      let data = []
+      let dataMensagem = []
 
-    return add
+      data.user_id_1 = auth.user.id
+      data.user_id_2 = dataRequisicao.user_id_destinatario
+
+      console.log(dataRequisicao.chat_id);
+      if (dataRequisicao.chat_id <= 0) {
+        const add = await App.create({ ...data })
+        dataMensagem.chat_id = add.id
+        console.log(add);
+      } else {
+        dataMensagem.chat_id = dataRequisicao.chat_id
+      }
+
+      dataMensagem.user_id = auth.user.id
+      dataMensagem.mensagem = dataRequisicao.mensagem
+      const addMensagem = await AppMensagem.create({ ...dataMensagem })
+
+      // console.log(addMensagem);
+      return addMensagem
+    } catch (err) {
+      console.log(err);
+      return err
+    }
   }
 
   /**
@@ -75,15 +104,24 @@ class ChatController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-    const data = await App.all();
-    // const data = await App.query()
-    //   .select('*')
-    //   .whereRaw('user_id_remetente = ? or user_id_destinatario ?', [cod, cod])
-    //   .orderBy('created_at')
-    //   .fetch();
+  async show({ params, request, response, view, auth }) {
+    try {
+      const data = await App.query()
+        .select('chats.*',
+          'users_1.username as username_1', 'users_1.id as user_id_1',
+          'users_2.username as username_2', 'users_2.id as user_id_2',
+        )
+        .joinRaw('left join users users_1 on users_1.id = chats.user_id_1')
+        .joinRaw('left join users users_2 on users_2.id = chats.user_id_2')
+        .whereRaw('user_id_1 = ' + auth.user.id
+          + ' or user_id_2 = ' + auth.user.id)
+        .orderBy('chats.created_at')
+        .fetch();
 
-    return data
+      return data
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   /**
@@ -95,7 +133,7 @@ class ChatController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
+  async edit({ params, request, response, view }) {
   }
 
   /**
@@ -106,7 +144,7 @@ class ChatController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update({ params, request, response }) {
   }
 
   /**
@@ -117,7 +155,7 @@ class ChatController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy({ params, request, response }) {
   }
 }
 

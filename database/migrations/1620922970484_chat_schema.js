@@ -7,9 +7,8 @@ class ChatSchema extends Schema {
   up () {
     this.create('chats', (table) => {
       table.increments()
-      table.integer('user_id_remetente').unsigned().references('id').inTable('users')
-      table.integer('user_id_destinatario').unsigned().references('id').inTable('users')
-      table.string('mensagem').notNullable()
+      table.integer('user_id_1').unsigned().references('id').inTable('users')
+      table.integer('user_id_2').unsigned().references('id').inTable('users')
       table.timestamps()
     })
   }
