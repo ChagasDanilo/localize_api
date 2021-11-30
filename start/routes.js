@@ -18,7 +18,7 @@ const Route = use('Route')
 
 // Route.on('/').render('welcome')
 
-Route.post('/servicoCategoriaStore', 'ServicoCategoriaController.store').middleware('auth')
+Route.post('/servicoCategoriaStore', 'ServicoCategoriaController.store')//.middleware('auth')
 Route.get('/servicoCategoriaShow', 'ServicoCategoriaController.show')
 Route.post('/servicoCategoriaUpdate', 'ServicoCategoriaController.update').middleware('auth')
 Route.delete('/servicoCategoriaDestroy', 'ServicoCategoriaController.destroy').middleware('auth')
